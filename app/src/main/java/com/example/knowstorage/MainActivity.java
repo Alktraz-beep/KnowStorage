@@ -69,22 +69,8 @@ public class MainActivity extends AppCompatActivity {
         requestQueue= Volley.newRequestQueue(getApplicationContext());
 
         /*saber hash*/
-        /*try {
-            PackageInfo info = getPackageManager().getPackageInfo(
-                    "com.example.knowstorage",                  //Insert your own package name.
-                    PackageManager.GET_SIGNATURES);
-            for (Signature signature : info.signatures) {
-                MessageDigest md = MessageDigest.getInstance("SHA");
-                md.update(signature.toByteArray());
-                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
-            }
-        } catch (PackageManager.NameNotFoundException e) {
-
-        } catch (NoSuchAlgorithmException e) {
-
-        }*/
         /**/
-        /*para continuar con FB*/
+        /*para continuar con FB********************************************************************************************/
         login.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
@@ -156,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-    /*para LOM*/
+    /*para LOM******************************************************************************************/
     public void login(View view){
         user=etUser.getText().toString().trim();
         password=etPassword.getText().toString().trim();
@@ -178,13 +164,6 @@ public class MainActivity extends AppCompatActivity {
                     }catch (JSONException e){
                         e.printStackTrace();
                     }
-                    /*if (response.equals("success")) {
-                        Intent intent = new Intent(MainActivity.this, Success.class);
-                        startActivity(intent);
-                        finish();
-                    } else if (response.equals("failure")) {
-                        Toast.makeText(MainActivity.this, "Usuario o contraseña inválido", Toast.LENGTH_SHORT).show();
-                    }*/
                 }
             }, new Response.ErrorListener() {
                 @Override
@@ -212,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "No puede estar vacío ningun campo!", Toast.LENGTH_SHORT).show();
         }
     }
-
+/****************************FUNCIONES SECUNDARIAS***************************************************************************************/
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         callbackManager.onActivityResult(requestCode, resultCode, data);

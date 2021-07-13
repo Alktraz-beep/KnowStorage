@@ -41,7 +41,7 @@
         android:id="@+id/textView2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Tambien puedes: "/>
+        android:text="Tambien puedes ingresar con: "/>
 
     <com.facebook.login.widget.LoginButton
         android:id="@+id/login_button"

@@ -89,6 +89,50 @@ public class Registro extends AppCompatActivity {
     }
     /*Para boton de profesor*/
     public void registrarProfesor(View view){
+        StringRequest stringRequest=new StringRequest(Request.Method.POST, URLregistroFBGOOGLE, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject obj=new JSONObject(response);
+                    boolean registrado=obj.getBoolean("valida");
+                    String msj=obj.getString("mensaje");
+                    if(registrado==true){ //si se logro registrar
+                        Intent intent = new Intent(Registro.this, Success.class);
+                        Toast.makeText(Registro.this, msj, Toast.LENGTH_SHORT).show();
+                        startActivity(intent);
+                        finish();
+                    }else{//si no mandarlo al inicio
+                        Intent intent = new Intent(Registro.this, MainActivity.class);
+                        Toast.makeText(Registro.this, msj, Toast.LENGTH_SHORT).show();
+                        startActivity(intent);
+                        finish();
+                    }
 
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(Registro.this, "Error Registro: "+error.toString().trim(), Toast.LENGTH_SHORT).show();
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String,String> data=new  HashMap<>();
+                data.put("id",id);
+                data.put("nombre",userName);
+                data.put("rol","p");//se inserta pero con p de profesor
+                return  data;
+            }
+        };
+        stringRequest.setRetryPolicy(
+                new DefaultRetryPolicy(
+                        10000,
+                        DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                        DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+        );
+        requestQueue.add(stringRequest);
     }
 }

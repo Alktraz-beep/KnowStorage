@@ -59,6 +59,7 @@ public class Registro extends AppCompatActivity {
                     String msj=obj.getString("mensaje");
                     if(registrado==true){ //si se logro registrar
                         Toast.makeText(Registro.this, msj, Toast.LENGTH_SHORT).show();
+                        subirPreferences(id,userName,"a");
                         iniciarPaginaSuccess();
                     }else{//si no mandarlo al inicio
                         Toast.makeText(Registro.this, msj, Toast.LENGTH_SHORT).show();
@@ -103,6 +104,7 @@ public class Registro extends AppCompatActivity {
                     String msj=obj.getString("mensaje");
                     if(registrado==true){ //si se logro registrar
                         Toast.makeText(Registro.this, msj, Toast.LENGTH_SHORT).show();
+                        subirPreferences(id,userName,"p");
                         iniciarPaginaSuccess();
                     }else{//si no mandarlo al inicio
                         Toast.makeText(Registro.this, msj, Toast.LENGTH_SHORT).show();

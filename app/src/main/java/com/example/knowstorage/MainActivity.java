@@ -75,7 +75,8 @@ public class MainActivity extends AppCompatActivity {
         /*INICIALIZacion de request*/
         requestQueue= Volley.newRequestQueue(getApplicationContext());
         sharedPreferences=getSharedPreferences("Sesion", Context.MODE_PRIVATE);//es el nombre de las credenciales de sesion
-        /*saber hash*/
+        /*validacion de sesion*/
+        validarSesion();
         /**/
         /**********************************para continuar con FB********************************************************************************************/
         login.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {

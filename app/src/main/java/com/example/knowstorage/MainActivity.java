@@ -7,6 +7,7 @@ package com.example.knowstorage;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -57,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView textView2;//el de abajo
     private String userName="user";
     private String idUsuario="user";
+    ProgressDialog progressDialog;
     CallbackManager callbackManager;
     RequestQueue requestQueue;
     SharedPreferences sharedPreferences;
@@ -77,6 +79,9 @@ public class MainActivity extends AppCompatActivity {
         sharedPreferences=getSharedPreferences("Sesion", Context.MODE_PRIVATE);//es el nombre de las credenciales de sesion
         /*validacion de sesion*/
         validarSesion();
+        /*dialog de espera*/
+        progressDialog=new ProgressDialog(this);
+        progressDialog.setMessage("Procesando solicitud...");
         /**/
         /**********************************para continuar con FB********************************************************************************************/
         login.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
@@ -132,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
                                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
                       );
                 requestQueue.add(stringRequest);
-
+                progressDialog.show();
             }
 
             @Override
@@ -192,6 +197,7 @@ public class MainActivity extends AppCompatActivity {
                             DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
             );
             requestQueue.add(stringRequest);
+            progressDialog.show();
         }else{
             Toast.makeText(this, "No puede estar vacío ningun campo!", Toast.LENGTH_SHORT).show();
         }

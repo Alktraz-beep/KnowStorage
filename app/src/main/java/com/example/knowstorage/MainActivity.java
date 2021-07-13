@@ -1,9 +1,15 @@
+/*CLase principal que se encarga del inicio de sesion con 2 botones uno para inicio desde LOM y otro desde FB
+credencial: Sesion
+variables: id,password,rol
+* */
 package com.example.knowstorage;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
@@ -53,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
     private String idUsuario="user";
     CallbackManager callbackManager;
     RequestQueue requestQueue;
+    SharedPreferences sharedPreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         callbackManager=CallbackManager.Factory.create();
         /*INICIALIZacion de request*/
         requestQueue= Volley.newRequestQueue(getApplicationContext());
-
+        sharedPreferences=getSharedPreferences("Sesion", Context.MODE_PRIVATE);//es el nombre de las credenciales de sesion
         /*saber hash*/
         /**/
         /*para continuar con FB********************************************************************************************/
@@ -90,17 +97,11 @@ public class MainActivity extends AppCompatActivity {
                             String msj=obj.getString("mensaje");
 
                             if(respuesta==true){ //si ya esta solo mandarlo a la Success donde se mostrarán sus audios etc...
-                                Intent intent = new Intent(MainActivity.this, Success.class);
                                 Toast.makeText(MainActivity.this, msj, Toast.LENGTH_SHORT).show();
-                                startActivity(intent);
-                                finish();
+                                iniciarPaginaSuccess();
                             }else{//si no esta mandarlo a una pagina nueva donde diga si es profesor o alumno e insertarlo en la DB y despues al success
-                                Intent intent = new Intent(MainActivity.this, Registro.class);
                                 Toast.makeText(MainActivity.this, msj, Toast.LENGTH_SHORT).show();
-                                intent.putExtra("id",idUsuario);
-                                intent.putExtra("nombre",userName);
-                                startActivity(intent);
-                                finish();
+                                iniciarPaginaRegistro();
                             }
                         }catch (JSONException e){
                             e.printStackTrace();
@@ -154,9 +155,7 @@ public class MainActivity extends AppCompatActivity {
                         JSONObject obj=new JSONObject(response);
                         boolean respuesta=obj.getBoolean("validar");
                         if(respuesta==true){
-                            Intent intent = new Intent(MainActivity.this, Success.class);
-                            startActivity(intent);
-                            finish();
+                            iniciarPaginaSuccess();
                         }else{
                             Toast.makeText(MainActivity.this, "Usuario o contraseña inválido", Toast.LENGTH_SHORT).show();
                         }
@@ -201,5 +200,37 @@ public class MainActivity extends AppCompatActivity {
 
     public String getUser(){
         return this.user;
+    }
+    /*Funcion que guarda usuario,pasword y rol*/
+    public  void guardarPreferences(String u,String p,String r){
+        SharedPreferences.Editor editor=sharedPreferences.edit();
+        editor.putString("id",u);
+        editor.putString("password",p);
+        editor.putString("rol",r);
+        editor.commit();
+
+    }
+    /*funcion que valida si hay alguna preference*/
+    public void validarSesion(){
+        String u=sharedPreferences.getString("id","");//dame el id si no hay dame ""
+        String p=sharedPreferences.getString("password","");//dame el pass si no hay dame ""
+        String r=sharedPreferences.getString("rol","");//dame el rol si no hay dame ""
+        if(!u.equals("") && !p.equals("") && !r.equals("")){//si estan con algo
+            iniciarPaginaSuccess();
+        }//de lo contrario continua
+    }
+    /*Inicia la pagina success*/
+    public  void iniciarPaginaSuccess(){
+        Intent intent = new Intent(MainActivity.this, Success.class);
+        startActivity(intent);
+        finish();
+    }
+    /*Inicia la pagina registro*/
+    public  void  iniciarPaginaRegistro(){
+        Intent intent = new Intent(MainActivity.this, Registro.class);
+        intent.putExtra("id",idUsuario);
+        intent.putExtra("nombre",userName);
+        startActivity(intent);
+        finish();
     }
 }

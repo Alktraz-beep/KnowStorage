@@ -1,6 +1,13 @@
+/*
+*Clase Registro que hace que se puedan registrar de acuerdo a su sesion de fb y una vez hecho los manda a Success
+* Credenciales: Sesion
+* variables id,password y rol
+*  */
 package com.example.knowstorage;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -29,6 +36,7 @@ public class Registro extends AppCompatActivity {
     private String id;
     private String userName;
     RequestQueue requestQueue;
+    SharedPreferences sharedPreferences;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,9 +45,10 @@ public class Registro extends AppCompatActivity {
         userName=getIntent().getExtras().getString("nombre");
         requestQueue= Volley.newRequestQueue(getApplicationContext());
 
+        sharedPreferences=getSharedPreferences("Sesion", Context.MODE_PRIVATE);
 
     }
-    /*Para Boton de alumno*/
+    /*****************************Para Boton de alumno*/
     public void registrarAlumno(View view){
         StringRequest stringRequest=new StringRequest(Request.Method.POST, URLregistroFBGOOGLE, new Response.Listener<String>() {
             @Override
@@ -49,15 +58,11 @@ public class Registro extends AppCompatActivity {
                     boolean registrado=obj.getBoolean("valida");
                     String msj=obj.getString("mensaje");
                     if(registrado==true){ //si se logro registrar
-                        Intent intent = new Intent(Registro.this, Success.class);
                         Toast.makeText(Registro.this, msj, Toast.LENGTH_SHORT).show();
-                        startActivity(intent);
-                        finish();
+                        iniciarPaginaSuccess();
                     }else{//si no mandarlo al inicio
-                        Intent intent = new Intent(Registro.this, MainActivity.class);
                         Toast.makeText(Registro.this, msj, Toast.LENGTH_SHORT).show();
-                        startActivity(intent);
-                        finish();
+                        iniciarPaginaMain();
                     }
 
                 }catch (JSONException e){
@@ -87,7 +92,7 @@ public class Registro extends AppCompatActivity {
         );
         requestQueue.add(stringRequest);
     }
-    /*Para boton de profesor*/
+    /****************************Para boton de profesor*/
     public void registrarProfesor(View view){
         StringRequest stringRequest=new StringRequest(Request.Method.POST, URLregistroFBGOOGLE, new Response.Listener<String>() {
             @Override
@@ -97,15 +102,11 @@ public class Registro extends AppCompatActivity {
                     boolean registrado=obj.getBoolean("valida");
                     String msj=obj.getString("mensaje");
                     if(registrado==true){ //si se logro registrar
-                        Intent intent = new Intent(Registro.this, Success.class);
                         Toast.makeText(Registro.this, msj, Toast.LENGTH_SHORT).show();
-                        startActivity(intent);
-                        finish();
+                        iniciarPaginaSuccess();
                     }else{//si no mandarlo al inicio
-                        Intent intent = new Intent(Registro.this, MainActivity.class);
                         Toast.makeText(Registro.this, msj, Toast.LENGTH_SHORT).show();
-                        startActivity(intent);
-                        finish();
+                        iniciarPaginaMain();
                     }
 
                 }catch (JSONException e){
@@ -134,5 +135,26 @@ public class Registro extends AppCompatActivity {
                         DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
         );
         requestQueue.add(stringRequest);
+    }
+    /********************************************FUNCIONES SECUNDARIAS****************************************************/
+    /*Inicia la paggina main de Success*/
+    public void iniciarPaginaSuccess(){
+        Intent intent = new Intent(Registro.this, Success.class);
+        startActivity(intent);
+        finish();
+    }
+    /*Inicia la paggina main de login*/
+    public  void iniciarPaginaMain(){
+        Intent intent = new Intent(Registro.this, MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
+    /*sube las preferencias una vez registrado*/
+    public void subirPreferences(String u,String p,String r){
+        SharedPreferences.Editor editor=sharedPreferences.edit();
+        editor.putString("id",u);
+        editor.putString("password",p);
+        editor.putString("rol",r);
+        editor.commit();
     }
 }

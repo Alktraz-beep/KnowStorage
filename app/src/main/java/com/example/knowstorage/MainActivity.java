@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
         sharedPreferences=getSharedPreferences("Sesion", Context.MODE_PRIVATE);//es el nombre de las credenciales de sesion
         /*saber hash*/
         /**/
-        /*para continuar con FB********************************************************************************************/
+        /**********************************para continuar con FB********************************************************************************************/
         login.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
@@ -97,6 +97,8 @@ public class MainActivity extends AppCompatActivity {
                             String msj=obj.getString("mensaje");
 
                             if(respuesta==true){ //si ya esta solo mandarlo a la Success donde se mostrarán sus audios etc...
+                                String rol=obj.getString("rol");
+                                guardarPreferences(idUsuario,userName,rol);
                                 Toast.makeText(MainActivity.this, msj, Toast.LENGTH_SHORT).show();
                                 iniciarPaginaSuccess();
                             }else{//si no esta mandarlo a una pagina nueva donde diga si es profesor o alumno e insertarlo en la DB y despues al success
@@ -143,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-    /*para LOM******************************************************************************************/
+    /***************************************para LOM******************************************************************************************/
     public void login(View view){
         user=etUser.getText().toString().trim();
         password=etPassword.getText().toString().trim();
@@ -154,7 +156,10 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         JSONObject obj=new JSONObject(response);
                         boolean respuesta=obj.getBoolean("validar");
+                        String rol=obj.getString("rol");
                         if(respuesta==true){
+                            /*guardar preferences*/
+                            guardarPreferences(user,password,rol);
                             iniciarPaginaSuccess();
                         }else{
                             Toast.makeText(MainActivity.this, "Usuario o contraseña inválido", Toast.LENGTH_SHORT).show();

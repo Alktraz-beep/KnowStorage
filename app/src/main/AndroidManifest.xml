@@ -37,6 +37,9 @@
         <activity android:name=".Registro">
 
         </activity>
+        <activity android:name=".Alumno">
+
+        </activity>
     </application>
 
 </manifest>

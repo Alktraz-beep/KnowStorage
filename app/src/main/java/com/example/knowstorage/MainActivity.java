@@ -169,7 +169,12 @@ public class MainActivity extends AppCompatActivity {
                             /*guardar preferences*/
                             guardarPreferences(user,password,rol);
                             Toast.makeText(MainActivity.this, "Bienvenid@", Toast.LENGTH_SHORT).show();
-                            iniciarPaginaSuccess();
+                            if(rol.equals("p")){
+                                iniciarPaginaSuccess();//si es profesor
+                            }else if(rol.equals("a")){
+                                iniciarPaginaAlumno();
+                            }
+
                         }else{
                             Toast.makeText(MainActivity.this, "Usuario o contraseña inválido", Toast.LENGTH_SHORT).show();
                             info.setText("Usuario o contraseña inválida");
@@ -232,12 +237,23 @@ public class MainActivity extends AppCompatActivity {
         String p=sharedPreferences.getString("password","");//dame el pass si no hay dame ""
         String r=sharedPreferences.getString("rol","");//dame el rol si no hay dame ""
         if(!u.equals("") && !p.equals("") && !r.equals("")){//si estan con algo
-            iniciarPaginaSuccess();
+            if(r.equals("p")){
+                iniciarPaginaSuccess();//hacia succes si es profesor
+            }else if(r.equals("a")){
+                iniciarPaginaAlumno();
+            }
+
         }//de lo contrario continua
     }
-    /*Inicia la pagina success*/
+    /*Inicia la pagina success PARA PROFESORES*/
     public  void iniciarPaginaSuccess(){
         Intent intent = new Intent(MainActivity.this, Success.class);
+        startActivity(intent);
+        finish();
+    }
+    /*Inicia la pagina success PARA ALUMNOS*/
+    public  void iniciarPaginaAlumno(){
+        Intent intent = new Intent(MainActivity.this, Alumno.class);
         startActivity(intent);
         finish();
     }

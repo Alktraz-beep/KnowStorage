@@ -65,7 +65,7 @@ public class Registro extends AppCompatActivity {
                     if(registrado==true){ //si se logro registrar
                         Toast.makeText(Registro.this, msj, Toast.LENGTH_SHORT).show();
                         subirPreferences(id,userName,"a");
-                        iniciarPaginaSuccess();
+                        iniciarPaginaAlumno();//aqui debo enviar hacia alumno.class en lugar de Success que es del profesor
                     }else{//si no mandarlo al inicio
                         Toast.makeText(Registro.this, msj, Toast.LENGTH_SHORT).show();
                         iniciarPaginaMain();
@@ -166,5 +166,11 @@ public class Registro extends AppCompatActivity {
         editor.putString("password",p);
         editor.putString("rol",r);
         editor.commit();
+    }
+    /*inicia una pagina diferente de alumno*/
+    public void iniciarPaginaAlumno(){
+        Intent intent = new Intent(Registro.this, Alumno.class);
+        startActivity(intent);
+        finish();
     }
 }

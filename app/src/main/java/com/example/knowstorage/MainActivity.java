@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
                             JSONObject obj=new JSONObject(response);
                             boolean respuesta=obj.getBoolean("validar");
                             String msj=obj.getString("mensaje");
-
+                            progressDialog.hide();
                             if(respuesta==true){ //si ya esta solo mandarlo a la Success donde se mostrarán sus audios etc...
                                 String rol=obj.getString("rol");
                                 guardarPreferences(idUsuario,userName,rol);
@@ -162,13 +162,17 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         JSONObject obj=new JSONObject(response);
                         boolean respuesta=obj.getBoolean("validar");
-                        String rol=obj.getString("rol");
+
+                        progressDialog.dismiss();
                         if(respuesta==true){
+                            String rol=obj.getString("rol");
                             /*guardar preferences*/
                             guardarPreferences(user,password,rol);
+                            Toast.makeText(MainActivity.this, "Bienvenid@", Toast.LENGTH_SHORT).show();
                             iniciarPaginaSuccess();
                         }else{
                             Toast.makeText(MainActivity.this, "Usuario o contraseña inválido", Toast.LENGTH_SHORT).show();
+                            info.setText("Usuario o contraseña inválida");
                         }
 
                     }catch (JSONException e){

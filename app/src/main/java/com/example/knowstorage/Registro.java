@@ -5,6 +5,7 @@
 *  */
 package com.example.knowstorage;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -37,6 +38,7 @@ public class Registro extends AppCompatActivity {
     private String userName;
     RequestQueue requestQueue;
     SharedPreferences sharedPreferences;
+    ProgressDialog progressDialog;//para la espera
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +48,8 @@ public class Registro extends AppCompatActivity {
         requestQueue= Volley.newRequestQueue(getApplicationContext());
 
         sharedPreferences=getSharedPreferences("Sesion", Context.MODE_PRIVATE);
+        progressDialog=new ProgressDialog(this);
+        progressDialog.setMessage("Registrando ");
 
     }
     /*****************************Para Boton de alumno*/
@@ -57,6 +61,7 @@ public class Registro extends AppCompatActivity {
                     JSONObject obj=new JSONObject(response);
                     boolean registrado=obj.getBoolean("valida");
                     String msj=obj.getString("mensaje");
+                    progressDialog.hide();
                     if(registrado==true){ //si se logro registrar
                         Toast.makeText(Registro.this, msj, Toast.LENGTH_SHORT).show();
                         subirPreferences(id,userName,"a");
@@ -92,6 +97,7 @@ public class Registro extends AppCompatActivity {
                         DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
         );
         requestQueue.add(stringRequest);
+        progressDialog.show();
     }
     /****************************Para boton de profesor*/
     public void registrarProfesor(View view){
@@ -102,6 +108,7 @@ public class Registro extends AppCompatActivity {
                     JSONObject obj=new JSONObject(response);
                     boolean registrado=obj.getBoolean("valida");
                     String msj=obj.getString("mensaje");
+                    progressDialog.hide();
                     if(registrado==true){ //si se logro registrar
                         Toast.makeText(Registro.this, msj, Toast.LENGTH_SHORT).show();
                         subirPreferences(id,userName,"p");
@@ -137,6 +144,7 @@ public class Registro extends AppCompatActivity {
                         DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
         );
         requestQueue.add(stringRequest);
+        progressDialog.show();
     }
     /********************************************FUNCIONES SECUNDARIAS****************************************************/
     /*Inicia la paggina main de Success*/

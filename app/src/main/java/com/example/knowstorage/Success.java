@@ -24,6 +24,7 @@ public class Success extends AppCompatActivity {
     TextView etBienvenido;
     String bienvenido="¡Bienvenido ";
     SharedPreferences sharedPreferences;
+    String nombre,id,rol;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,7 +32,10 @@ public class Success extends AppCompatActivity {
         etBienvenido=findViewById(R.id.textView);
         etBienvenido.setText(bienvenido+"!");//nombre
         sharedPreferences = getSharedPreferences("Sesion", Context.MODE_PRIVATE);
+        /*se valida sesion*/
         validarSesion();
+
+
     }
     /***************************Boton de logout/salir*/
     public void logout(View v){

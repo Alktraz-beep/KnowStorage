@@ -1,3 +1,5 @@
+/*
+* Clase Alumno que permite que el alumno envie un audio con la calificación*/
 package com.example.knowstorage;
 
 import android.content.Context;

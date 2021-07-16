@@ -1,5 +1,5 @@
 /*
-* Success class es la home de la aplicacion donde sera relativa al alumno o profesor aqui solo ingresan usuarios loggeados
+* Success class es la home del profesor donde crea salas y ve audios
 * credenciales: Sesion
 * Variables: id,password,rol
 * */
@@ -43,6 +43,7 @@ public class Success extends AppCompatActivity {
         etBienvenido.setText(bienvenido);//nombre
 
     }
+    /***************************************************OBJETOS del layout********************************************************************/
     /***************************Boton de logout/salir*/
     public void logout(View v){
         AccessToken token;
@@ -52,6 +53,16 @@ public class Success extends AppCompatActivity {
             LoginManager.getInstance().logOut();
         }
         limpiarPreferences();
+    }
+    /*******************************Boton para ir a pagina que creaTest*/
+    public void crearTest(View v){
+        Intent intent=new Intent(Success.this,NombrePasswordTest.class);
+        startActivity(intent);
+    }
+    /*******************************Boton para ver los Tests*/
+    public void verTests(View v){
+        //Intent intent=new Intent(Success.this,Tests.class);
+        //startActivity(intent);
     }
     /*****************************************FUNCIONES SECUNDARIAS**********************************************************/
     /*pone los preferences en "" para que lo valide Success y Main*/

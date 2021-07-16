@@ -25,6 +25,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.facebook.login.LoginManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -50,6 +51,7 @@ public class Registro extends AppCompatActivity {
         sharedPreferences=getSharedPreferences("Sesion", Context.MODE_PRIVATE);
         progressDialog=new ProgressDialog(this);
         progressDialog.setMessage("Registrando ");
+        progressDialog.setCanceledOnTouchOutside(false);
 
     }
     /*****************************Para Boton de alumno*/
@@ -172,5 +174,12 @@ public class Registro extends AppCompatActivity {
         Intent intent = new Intent(Registro.this, Alumno.class);
         startActivity(intent);
         finish();
+    }
+    /*cuando se destruye si se interrumpe hacer que desloggee de facebook*/
+
+    @Override
+    protected void onStop() {
+        LoginManager.getInstance().logOut();
+        super.onStop();
     }
 }

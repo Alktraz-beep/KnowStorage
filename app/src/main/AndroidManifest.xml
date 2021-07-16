@@ -40,6 +40,12 @@
         <activity android:name=".Alumno">
 
         </activity>
+        <activity android:name=".NombrePasswordTest">
+
+        </activity>
+        <activity android:name=".Temas">
+
+        </activity>
     </application>
 
 </manifest>

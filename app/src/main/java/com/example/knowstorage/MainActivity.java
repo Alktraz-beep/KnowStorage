@@ -35,6 +35,7 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.Profile;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
@@ -82,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
         /*dialog de espera*/
         progressDialog=new ProgressDialog(this);
         progressDialog.setMessage("Procesando solicitud...");
+        progressDialog.setCanceledOnTouchOutside(false);
         /**/
         /**********************************para continuar con FB********************************************************************************************/
         login.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
@@ -118,7 +120,9 @@ public class MainActivity extends AppCompatActivity {
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(MainActivity.this, "Error: "+error.toString().trim(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "Ha ocurrido un error por favor intenta ingresar nuevamente ", Toast.LENGTH_SHORT).show();
+                        LoginManager.getInstance().logOut();
+
                     }
                 }){
                     @Override

@@ -5,25 +5,39 @@
     android:gravity="center"
     >
 
+
     <TextView
         android:id="@+id/textView4"
         android:layout_width="match_parent"
-        android:layout_height="134dp"
+        android:layout_height="124dp"
         android:gravity="center"
-        android:text="Di la palabra INICIA TEST para recabar los temas de tu test y FINALIZA TEST para terminar\nPara diferenciar entre temas di la palabra TEMA # mientras grabas\nAbajo se mostraran las palabras clave a evaluar separadas por espacios el cual puedes editar" />
+        android:text="*Di la palabra INICIA TEST para recabar los temas de tu test y FINALIZA TEST para terminar (Saldrá un cuadro de texto abajo diciendo que se inició el test)
+        \n*La palabra clave TEMA servirá como diferenciador entre temas
+        \n*Abajo se mostrará lo que dices y al FINALIZA TEST saldrán el resultado final separando los temas por **
+        \n*Después de FINALIZA TEST podrás editar y revisar tus temas, NO PONGAS COMAS O SEPARADORES DE TEXTO A EXCEPCION DE ** PARA SEPARAR TEMAS"
+        android:textStyle="bold"/>
 
     <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="312dp">
+        android:layout_width="314dp"
+        android:layout_height="310dp">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+
+                    >
+
+                    <EditText
+                        android:id="@+id/Temas"
+                        android:layout_width="314dp"
+                        android:layout_height="310dp" />
+                </LinearLayout>
+
     </ScrollView>
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/Datos"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Presiona CONFIRMAR para concluir la creación del test"
@@ -33,5 +47,6 @@
         android:id="@+id/button6"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Confirmar" />
+        android:text="Confirmar"
+        android:onClick="confirmar"/>
 </LinearLayout>

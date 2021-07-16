@@ -29,6 +29,6 @@
 	   echo $page->TEMA.',';
 	   echo "<br>";
 	}
-	echo ('<br> escribiste otra vez '.$wpdb->prefix);
+	//echo ('<br> escribiste otra vez '.$wpdb->prefix);
 	
 ?>

@@ -61,8 +61,8 @@ public class Success extends AppCompatActivity {
     }
     /*******************************Boton para ver los Tests*/
     public void verTests(View v){
-        //Intent intent=new Intent(Success.this,Tests.class);
-        //startActivity(intent);
+        Intent intent=new Intent(Success.this,MisTest.class);
+        startActivity(intent);
     }
     /*****************************************FUNCIONES SECUNDARIAS**********************************************************/
     /*pone los preferences en "" para que lo valide Success y Main*/

@@ -66,7 +66,7 @@ public class NombrePasswordTest extends AppCompatActivity {
         etTimeSec=findViewById(R.id.segundos);
         requestQueue= Volley.newRequestQueue(getApplicationContext());
         progressDialog=new ProgressDialog(this);
-        progressDialog.setMessage("Procesando solicitud...");
+        progressDialog.setMessage("Preparando datos, No cierres la ventana");
         progressDialog.setCanceledOnTouchOutside(false);
 
     }
@@ -119,7 +119,7 @@ public class NombrePasswordTest extends AppCompatActivity {
                     boolean existe=obj.getBoolean("existe");
                     if(!existe){
                         progressDialog.hide();
-                        Toast.makeText(getApplicationContext() , "Test registrado con éxito",   Toast.LENGTH_SHORT).show();//si no existe avanzar
+                        Toast.makeText(getApplicationContext() , "Datos válidos de test",   Toast.LENGTH_SHORT).show();//si no existe avanzar
                         iniciarPaginaTemas();
                     }else{
                         //si no existe decir que ya existe ese Nombre

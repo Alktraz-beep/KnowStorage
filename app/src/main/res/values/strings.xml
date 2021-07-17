@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Knowstorage</string>
-    <string name="facebook_app_id">523921222360828</string> <string name="fb_login_protocol_scheme">fb523921222360828</string>
+    <string name="facebook_app_id">523921222360828</string>
+    <string name="fb_login_protocol_scheme">fb523921222360828</string>
     <string name="avisoNombrePassword1"><b>Primero Asigna un nombre</b> y una contraseña al test (Estos datos los darás a tus alumnos para que envien su audio) </string>
 
 </resources>

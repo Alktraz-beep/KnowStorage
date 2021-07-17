@@ -5,7 +5,10 @@ package com.example.knowstorage;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -24,7 +27,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 public class Temas extends Activity{
@@ -33,7 +50,11 @@ public class Temas extends Activity{
     String passwordTest;
     String duracion;
     EditText temas;
-
+    RequestQueue requestQueue;//para la respuesta PHP
+    ProgressDialog progressDialog;
+    String URLguardarTest="https://leanonmecc.com/wp-content/plugins/buscar_audio/guardarTest.php";//link donde accedo a guardar test
+    SharedPreferences sharedPreferences;//para obtener el nombre id
+    String id;
     /*VARIABLES DE RECONOCIMIENTO DE VOZ*/
     private boolean test=false;//bandera de reconocimiento
     private boolean acomodarTexto=false;//bandera de reconocimiento finalizado para acomodar texto
@@ -61,6 +82,13 @@ public class Temas extends Activity{
         passwordTest= getIntent().getStringExtra("passwordTest");
         duracion=getIntent().getStringExtra("timeTest");
         Datos.setText(Datos.getText()+"\nTest:"+nombreTest+"\nPassword:"+passwordTest+"\nDuración:"+duracion);//pone los datos para confirmar
+        /*para meter datos a la DB*/
+        requestQueue= Volley.newRequestQueue(getApplicationContext());
+        progressDialog=new ProgressDialog(this);
+        progressDialog.setMessage("Creando test...");
+        progressDialog.setCanceledOnTouchOutside(false);
+        sharedPreferences = getSharedPreferences("Sesion", Context.MODE_PRIVATE);//abro credenciales de SESION
+        id=sharedPreferences.getString("id","");//para obtener el id del usuario*/
         /*para el speech*/
 
 
@@ -76,6 +104,14 @@ public class Temas extends Activity{
 
     }
     /*****************************************FUNCIONES PRIMARIAS****************************************************************************/
+    /*****************************BOTON guarda en la db todos los datos recabados*/
+    public void confirmar(View v){
+        if(!temas.getText().toString().equals("")){
+            guardarTest();
+        }else{
+            Toast.makeText(getApplicationContext() , "No puede estar vacío",   Toast.LENGTH_SHORT).show();
+        }
+    }
     /*****************************************funcion para cargar e iniciar el speech*/
     public void iniciaSpeech(){
         speech.setRecognitionListener(
@@ -165,11 +201,66 @@ public class Temas extends Activity{
         recognizerIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);//resultados
         speech.startListening(recognizerIntent);
     }
-    /**********************************************FUNCIOONES SECUNDARIAS************************************************/
-    /***********************************************Funcion para el boton de confirmación*/
-    public void confirmar(View v){
+    /**********************************************FUNCIOONES SECUNDARIAS*************************************************************************************/
 
+    /***********************************************Funcion para guardarTest en DB*/
+    public void guardarTest(){
+        StringRequest stringRequest=new StringRequest(Request.Method.POST, URLguardarTest, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject obj=new JSONObject(response);//aqui se obtiene la respuesta de servicio PHP
+                    boolean existe=obj.getBoolean("valida");
+                    String msj=obj.getString("mensaje");
+                    if(existe){
+                        progressDialog.hide();
+                        Toast.makeText(getApplicationContext() , msj,   Toast.LENGTH_SHORT).show();//se creó test
+                        iniciarPaginaMain();
+                    }else{
+                        //si no existe decir que ya existe ese Nombre
+                        Toast.makeText(getApplicationContext() , msj,   Toast.LENGTH_SHORT).show();//no se creó
+                        progressDialog.hide();
+                    }
+                }catch(JSONException e){
+                    e.printStackTrace();
+                    progressDialog.hide();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext() , "No se pudo crear, por favor inténtalo nuevamente",   Toast.LENGTH_SHORT).show();
+                progressDialog.hide();
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String,String> data=new HashMap<>();
+                data.put("ID_PROFESOR",id);
+                data.put("nombreTest",nombreTest);
+                data.put("passwordTest",passwordTest);
+                data.put("duracion",duracion);
+                data.put("temas",temas.getText().toString());
+                return  data;
+            }
+        };
+        stringRequest.setRetryPolicy(
+                new DefaultRetryPolicy(
+                        10000,
+                        DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                        DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+        );
+        progressDialog.show();
+        requestQueue.add(stringRequest);
     }
+    /**********************************************************************************FUNCION PARA INICIAR UNA PAGINA MAIN*/
+    public void iniciarPaginaMain(){
+        Intent intent=new Intent(Temas.this,MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
     /******************************Funcion que acomoda el texto a uno con **Tema# de manera visual*/
     public void acomodarTexto(){
         StringTokenizer st=new StringTokenizer(text," ");//separa el result por espacios

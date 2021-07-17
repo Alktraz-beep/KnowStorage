@@ -1,30 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.knowstorage">
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:networkSecurityConfig="@xml/network_security_config">
+        android:theme="@style/AppTheme">
+        <activity android:name=".Audios"></activity>
 
-        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
-        <activity android:name="com.facebook.FacebookActivity" android:configChanges= "keyboard|keyboardHidden|screenLayout|screenSize|orientation" android:label="@string/app_name" />
-        <activity android:name="com.facebook.CustomTabActivity" android:exported="true">
-        <intent-filter>
-        <action android:name="android.intent.action.VIEW" />
-        <category android:name="android.intent.category.DEFAULT" />
-        <category android:name="android.intent.category.BROWSABLE" />
-        <data android:scheme="@string/fb_login_protocol_scheme" />
-        </intent-filter>
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
+
+        <activity
+            android:name="com.facebook.FacebookActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:label="@string/app_name" />
+        <activity
+            android:name="com.facebook.CustomTabActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="@string/fb_login_protocol_scheme" />
+            </intent-filter>
         </activity>
-
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -32,21 +43,24 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Success">
-
-        </activity>
-        <activity android:name=".Registro">
-
-        </activity>
-        <activity android:name=".Alumno">
-
-        </activity>
-        <activity android:name=".NombrePasswordTest">
-
-        </activity>
-        <activity android:name=".Temas">
-
-        </activity>
+        <activity
+            android:name=".Success"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Registro"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Alumno"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".NombrePasswordTest"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Temas"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".MisTest"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

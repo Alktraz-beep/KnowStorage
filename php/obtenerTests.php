@@ -1,10 +1,9 @@
 <?php
     header("Content-type: application/json; charset=utf-8");
     include 'conexion.php';
-    //if(isset($_POST["nombreTest"])){
+    if(isset($_POST["nombreProfesor"])){
 
         $nombreProfesor=$_POST["nombreProfesor"];
-        $nombreProfesor="4260479387378781";
         $resp["tests"]=array();
         $rows=$wpdb->get_results("SELECT * FROM TestAudio WHERE ID_PROFESOR='$nombreProfesor'");
         if(count($rows)>0){
@@ -24,5 +23,5 @@
             $resp["valida"]=$validar;
         }
         echo json_encode($resp, JSON_UNESCAPED_UNICODE);
-    //}
+    }
 ?>

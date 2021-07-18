@@ -35,9 +35,9 @@ public class ListAdapter extends ArrayAdapter<Test> {
         Test test=listaModelo.get(position);
 
         TextView nombreTest=view.findViewById(R.id.textNombreTest);
-        nombreTest.setText("Nombre Test:"+test.getNombreTest());
+        nombreTest.setText("Nombre Test: "+test.getNombreTest());
         TextView passwordTest=view.findViewById(R.id.textPasswordTest);
-        passwordTest.setText("Password Test"+test.getPasswordTest());
+        passwordTest.setText("Password Test: "+test.getPasswordTest());
 
         return view;
     }

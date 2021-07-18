@@ -1,9 +1,10 @@
 /**En esta clase salen todos los tests guardados por el profesor
- * Por ahora no usa credenciales solo es consulta de audios y de tests*/
+ * si usa credenciales solo es consulta de audios y de tests*/
 package com.example.knowstorage;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
@@ -49,6 +50,7 @@ public class MisTest extends AppCompatActivity implements AdapterView.OnItemClic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mistest);
         tests=findViewById(R.id.tests);
+        tests.setOnItemClickListener(this);
         /*PARA SERVICIOS PHP*/
         requestQueue= Volley.newRequestQueue(getApplicationContext());
         sharedPreferences = getSharedPreferences("Sesion", Context.MODE_PRIVATE);//abro credenciales de SESION
@@ -64,7 +66,9 @@ public class MisTest extends AppCompatActivity implements AdapterView.OnItemClic
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         /*Que pasa si se clickea un item de ahi*/
-
+        Intent intent=new Intent(MisTest.this,Audios.class);
+        intent.putExtra("nombreTest",listAdapter.getItem(position).getNombreTest());
+        startActivity(intent);
     }
 
     @Override

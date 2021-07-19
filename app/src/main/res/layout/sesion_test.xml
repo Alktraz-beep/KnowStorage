@@ -1,9 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SesionTest">
+    tools:context=".SesionTest"
+    android:background="#71bdB2"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:gravity="center">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:id="@+id/Info1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ingresa los datos de test que tu profesor anteriormente te dió"
+        android:layout_gravity="center"
+        android:textAlignment="center"/>
+
+    <EditText
+        android:id="@+id/nombreTest"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="Nombre del test"/>
+
+    <EditText
+        android:id="@+id/passwordTest"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPassword"
+        android:hint="Password del test"/>
+    <Button
+        android:id="@+id/buscar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white"
+        android:background="@color/com_facebook_button_background_color"
+        android:text="Buscar"
+        android:layout_marginTop="10dp"
+        android:onClick="buscar"/>
+    <TextView
+        android:id="@+id/rubrica"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Aquí saldrá la rúbrica a calificar"
+        android:layout_marginTop="20dp"/>
+    <Button
+        android:id="@+id/siguiente"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/com_facebook_button_background_color"
+        android:textColor="@android:color/white"
+        android:text="Siguiente"
+        android:onClick="siguiente"/>
+
+</LinearLayout>

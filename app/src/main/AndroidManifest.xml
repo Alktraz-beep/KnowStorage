@@ -14,8 +14,7 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SesionTest"></activity>
-        <activity android:name=".VisualizadorAudio" />
+        <activity android:name=".LTTA"></activity>
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -64,6 +63,12 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".Audios"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".SesionTest"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".VisualizadorAudio"
             android:screenOrientation="portrait" />
     </application>
 

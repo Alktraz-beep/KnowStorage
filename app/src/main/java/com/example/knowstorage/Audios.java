@@ -1,11 +1,12 @@
 /*
-*Clase para poner lista de audios con diferente audio
+*Clase para poner lista de audios con diferente audio de los TEST de PROFESORES
 * no tiene credenciales */
 package com.example.knowstorage;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -37,11 +38,17 @@ public class Audios extends AppCompatActivity implements AdapterView.OnItemClick
     List<Audio> listaAudios=new ArrayList<Audio>();
     ListAdapterAudios listAdapterAudios;
     /*servicio PHP*/
-    String URLobtenerTests="https://leanonmecc.com/wp-content/plugins/buscar_audio/obtenerAudios.php";//url de servicio php
+    String URLobtenerAudiosP="https://leanonmecc.com/wp-content/plugins/buscar_audio/obtenerAudios.php";//url de servicio php
+    String URLobtenerAudiosA="https://leanonmecc.com/wp-content/plugins/buscar_audio/obtenerAudiosAlumno.php";//url de servicio php
     RequestQueue requestQueue;
     String nombreTest;
     /*para dialog*/
     ProgressDialog progressDialog;
+    String variable="";
+    /*Para obtener datos por el rol*/
+    String rol;
+    String id;
+    SharedPreferences sharedPreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,7 +63,17 @@ public class Audios extends AppCompatActivity implements AdapterView.OnItemClick
         progressDialog.setMessage("Cargando audios no cierres la ventana");
         progressDialog.setCanceledOnTouchOutside(false);
         /*para obtener la lista de audios*/
-        obtenerAudios();
+        sharedPreferences=getSharedPreferences("Sesion", Context.MODE_PRIVATE);
+        rol=sharedPreferences.getString("rol","");
+        id=sharedPreferences.getString("id","");
+        if(rol.equals("p")){
+            variable=nombreTest;
+            obtenerAudios(URLobtenerAudiosP);
+        }else if(rol.equals("a")){
+            variable=id;
+            obtenerAudios(URLobtenerAudiosA);
+        }
+
     }
 
     @Override
@@ -73,8 +90,8 @@ public class Audios extends AppCompatActivity implements AdapterView.OnItemClick
     /***********************************************FUNCIONES SECUNDARIAS*******************************************/
 
     /*busca servicio php y muestra los resultados de audios*/
-    public void obtenerAudios(){
-        StringRequest stringRequest=new StringRequest(Request.Method.POST, URLobtenerTests, new Response.Listener<String>() {
+    public void obtenerAudios(String URL){
+        StringRequest stringRequest=new StringRequest(Request.Method.POST, URL , new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {
@@ -115,7 +132,7 @@ public class Audios extends AppCompatActivity implements AdapterView.OnItemClick
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String,String> data=new HashMap<>();
-                data.put("nombreTest",nombreTest);
+                data.put("nombreTest",variable);
                 return  data;
             }
         };

@@ -14,7 +14,8 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".VisualizadorAudio"></activity>
+        <activity android:name=".SesionTest"></activity>
+        <activity android:name=".VisualizadorAudio" />
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"

@@ -4,7 +4,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#71bdB2">
+
+    <TextView
+        android:id="@+id/datos"
+        android:layout_width="104dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="28dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/Logout"
@@ -16,5 +27,33 @@
         android:text="Salir"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:onClick="logout"/>
+        android:onClick="logout"
+        android:textColor="@color/com_facebook_button_text_color"
+        android:background="@color/com_facebook_button_background_color"/>
+
+    <Button
+        android:id="@+id/aplicarTest"
+        android:layout_width="268dp"
+        android:layout_height="81dp"
+        android:layout_marginTop="256dp"
+        android:background="#279989"
+        android:text="Aplicar Test"
+        android:textColor="@android:color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:onClick="aplicarTest"/>
+
+    <Button
+        android:id="@+id/verMisAudios"
+        android:layout_width="268dp"
+        android:layout_height="81dp"
+        android:layout_marginTop="428dp"
+        android:background="#279989"
+        android:text="Ver mis audios"
+        android:textColor="@android:color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:onClick="verMisAudios"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

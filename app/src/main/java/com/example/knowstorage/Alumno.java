@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,12 +16,19 @@ import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
 
 public class Alumno extends AppCompatActivity {
+    /***Información de sesion***/
     SharedPreferences sharedPreferences;
+    private String id;
+    private String password;
+    TextView textView;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.alumno);
+        textView=findViewById(R.id.datos);
         sharedPreferences=getSharedPreferences("Sesion", Context.MODE_PRIVATE);
+        id=sharedPreferences.getString("id","");
+        textView.setText("¡Bienvenido!\nID: "+id);
         validarSesion();
     }
     /***************************Boton de logout/salir*/
@@ -33,7 +41,17 @@ public class Alumno extends AppCompatActivity {
         }
         limpiarPreferences();
     }
-    /*******************************Funciones Secundarias*/
+    /*********************************Boton para ir a pagina que pide nombre y contraseña de un test**/
+    public void aplicarTest(View v){
+        Intent intent = new Intent(this, SesionTest.class);
+        startActivity(intent);
+    }
+    /************************************************************Boton que muestra todos los test*/
+    public void verMisAudios(View v){
+        Intent intent = new Intent(this, Audios.class);
+        startActivity(intent);
+    }
+    /*******************************Funciones Secundarias*******************************************************************************************/
     public void limpiarPreferences(){
         sharedPreferences.edit().clear().apply();
         iniciarPaginaMain();

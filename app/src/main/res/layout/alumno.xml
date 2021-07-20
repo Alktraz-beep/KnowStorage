@@ -50,7 +50,7 @@
         android:layout_height="81dp"
         android:layout_marginTop="428dp"
         android:background="#279989"
-        android:text="Ver mis audios"
+        android:text="Ver mis audioTest"
         android:textColor="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

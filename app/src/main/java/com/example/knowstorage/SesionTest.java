@@ -118,7 +118,7 @@ public class SesionTest extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext() , "no se pudo obtener su información",   Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext() , "no se pudo obtener su información intenta nuevamente",   Toast.LENGTH_SHORT).show();
                 progressDialog.hide();
             }
         }){
@@ -140,12 +140,13 @@ public class SesionTest extends AppCompatActivity {
         requestQueue.add(stringRequest);
 
     }
+    /**************************************Transforma en la cadena y la divide con su separador "**" */
     public String transformarTemas(String t){
         StringTokenizer stringTokenizer=new StringTokenizer(t," \n");
         String transformados="";
         while(stringTokenizer.hasMoreTokens()){
             String palabra=stringTokenizer.nextToken();
-            if(palabra.contains("**tema")){
+            if(palabra.contains("**")){
                 transformados+=palabra+"\n";
             }
         }

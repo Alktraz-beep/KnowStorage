@@ -58,10 +58,6 @@ public class Temas extends Activity{
     /*VARIABLES DE RECONOCIMIENTO DE VOZ*/
     private boolean test=false;//bandera de reconocimiento
     private boolean acomodarTexto=false;//bandera de reconocimiento finalizado para acomodar texto
-    /*medicion de duracion*/
-    private  long start;
-    private  long end;
-    private  float duracionTest=0.0f;
     private int RecordAudioRequestCode = 1;
     /*para mensajes*/
     String aviso="";//dice si se acabo o no el proceso

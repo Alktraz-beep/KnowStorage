@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="316dp"
         android:background="@color/com_facebook_button_background_color"
-        android:text="confirmar"
+        android:text="Evaluar"
         android:textColor="@color/com_facebook_button_text_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.885"

@@ -47,6 +47,7 @@ public class LTTA extends Activity {
     ArrayList<String> copiaPalabrasClave =new ArrayList<String>();//aqui se ponen las palabras clave dichas
     ArrayList<ArrayList<String>> Temas =new ArrayList<ArrayList<String>>();//aqui es un array de arrays que contiene cada tema
     ArrayList<ArrayList<String>> Temas2 =new ArrayList<ArrayList<String>>();//es la copia de los temas
+    int cantidadPalabras=0;//aqui se almacena la cantidad palabras dichas por el alumno
     /*****PARA GRABACION******/
     private static int MICROPHONE_PERMISSON=200;
     EditText editText;
@@ -63,7 +64,7 @@ public class LTTA extends Activity {
     String text = "";
     /******PARA GUARDAR EN DB*****/
     String nombreTest;
-    String resultados;
+    String descripcion="";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,7 +101,15 @@ public class LTTA extends Activity {
                     duracionAudio=(float)time/(float) 1000;
                     duracionMinutosAudio=duracionAudio/60;
                     calificarDuracion(duracionAudio);
-                    //etResultados.setText("Calificacion: "+califDuracion+" Duracion "+duracionAudio);
+                    String noDicho= calificarTemas();
+                    calificarVelocidad(cantidadPalabras);
+                    califTotal=califDuracion*.3f+califVelocidad*.3f+califTemas*.4f;
+                    descripcion="Calificación Total: "+String.format("%.2f",califTotal)
+                            +"\nCalificación de duración: "+String.format("%.2f",califDuracion)+" Duracion: "+String.format("%.2f",duracionMinutosAudio)
+                            +"\nCalificación de fluidez: "+String.format("%.2f",califVelocidad)
+                            +"\nCalificación de temas: "+String.format("%.2f",califTemas)
+                            +"\nTemas faltantes: "+noDicho+"\n"+transformarTemas(temas);
+                    etResultados.setText(descripcion);
                 }
             }catch (Exception e){
                 e.printStackTrace();
@@ -165,6 +174,109 @@ public class LTTA extends Activity {
     }
     /******************************************************FUNCIONES SECUNDARIAS********************************************************************
      * *********************************************************************************************************************************************/
+    public String calificarTemas(){
+        ////primero llenamos el array de temas de temas
+        int numTemas=0;
+        StringTokenizer stringTokenizer=new StringTokenizer(temas," \n");
+        while (stringTokenizer.hasMoreTokens()){
+            String str=stringTokenizer.nextToken();
+            if(str.contains("**")){//aqui vemos cuantos temas hay sacamos numero de temas
+                numTemas++;
+                //ArrayList<String > auxiliar=new ArrayList<>();
+                Temas.add(new ArrayList<String>());
+                Temas.get(numTemas-1).add(str);
+            }else{
+                Temas.get(numTemas-1).add(str);
+            }
+
+        }
+        /*for(int i=0;i<numTemas;i++){
+            ArrayList<String > auxiliar=new ArrayList<>();
+
+        }*/
+
+        copiarArraydeArrays(Temas,Temas2);//copia el array Temas a Temas2
+        /*Sacamos cuantas palabras dijo*/
+        StringTokenizer stringTokenizer1=new StringTokenizer(text," -(),");
+        cantidadPalabras=stringTokenizer1.countTokens();//obtenemos la cantidad de palabras
+        while(stringTokenizer1.hasMoreTokens()){
+            String string=stringTokenizer1.nextToken();
+            for(int i=0;i<Temas.size();i++){
+                if(!string.equalsIgnoreCase("tema") && !string.equalsIgnoreCase("temas"))
+                    compara(Temas.get(i),string,copiaPalabrasClave);//ve si son iguales y las deposita en copiaPalabrasClave las dichas y se las quita a Temas
+            }
+        }
+        /*Evaluacion primero saca temas no dichos*/
+        int cont=0;
+        String indiceDeTema="";
+        for(int i=0;i<Temas2.size();i++){
+            if(Temas2.get(i).size()-Temas.get(i).size()>=1){//si es mayor igual a 1 significa que Temas2 es mayor y hay una diferencia (si dijo temas)
+                cont++;//si mencionó sobre temas
+            }else{//si es menor a 1 significa que la diferencia no es nada es decir no dijo esos temas
+                indiceDeTema+=","+(i+1);
+            }
+        }
+        /*Luego hace evaluacion*/
+        if(cont==Temas2.size()){
+            califTemas=100;
+        }else{
+            califTemas=((float)cont/(float)Temas2.size())*100;
+        }
+        return indiceDeTema;
+    }
+    /*FUNCION QUE COMPARA SI UNA STRING SE PARECE A ALGUNA DE UN AREEGLO DE STRINGS*/
+    public static boolean compara(ArrayList<String> pc,String palabra,ArrayList<String> copiapc){
+        boolean iguales=false;
+        for (int i=0;i<pc.size();i++){
+            if(pc.get(i).equalsIgnoreCase(palabra)==true){
+                iguales=true;
+                copiapc.add(pc.get(i));
+                pc.remove(i);
+                //System.out.println("se encontro: "+palabra+" "+pc.get(i));
+            }
+        }
+
+        return iguales;
+    }
+    public static void imprimirArray(ArrayList<String> array){
+        System.out.println("---------Array:");
+        for(int i=0;i<array.size();i++){
+            System.out.println(array.get(i));
+        }
+    }
+    public String transformarTemas(String t){
+        StringTokenizer stringTokenizer=new StringTokenizer(t," \n");
+        String transformados="";
+        int cont=0;
+        while(stringTokenizer.hasMoreTokens()){
+            String palabra=stringTokenizer.nextToken();
+
+            if(palabra.contains("**")){
+                cont++;
+                transformados+=cont+" :"+palabra+"\n";
+            }
+        }
+        return transformados;
+    }
+    /******************************Solo imprime para revisar que estén bien*/
+    public void imprimirTemas(ArrayList<ArrayList<String>> arrayofarray){
+        System.out.println("Temas");
+        for(int i=0;i<arrayofarray.size();i++){
+            for(int j=0;j<arrayofarray.get(i).size();j++){
+                System.out.println(arrayofarray.get(i).get(j));
+            }
+        }
+    }
+    /********************************Copia del array a al array b*/
+    public void copiarArraydeArrays(ArrayList<ArrayList<String>> arrayA,ArrayList<ArrayList<String>> arrayB){
+        for(int i=0;i<arrayA.size();i++){
+            ArrayList<String> lista=new ArrayList<String>();//auxiliar
+            for(int j=0;j<arrayA.get(i).size();j++){
+                lista.add(arrayA.get(i).get(j));//obtengo cada array y lo añado
+            }
+            arrayB.add(lista);
+        }
+    }
     /*****************************************ALGORITMO PARA CALIFICAR VELOCIDAD[][][][]*/
     public void calificarVelocidad(int palabrasT){
         if((float)palabrasT<(float)((duracion/60)*MIN_PALABRAS)){//menor a 600 palabras
@@ -173,12 +285,7 @@ public class LTTA extends Activity {
             califVelocidad+=(((((float)duracion/60)*(float)MAX_PALABRAS)-(float)palabrasT)/(((float)duracion/60)*(float)MAX_PALABRAS))*100;
         }
     }
-    /*************RELLENA ARRAYS Y DEVUELVE LA CANTIDAD DE PALABRAS DICHAS POR EL ALUMNO**/
-    public int obtenerPalabrasYLlenarArrays(String st){
-        StringTokenizer stringTokenizer=new StringTokenizer(st," \n-()*");
-        int palabrasT=stringTokenizer.countTokens();
-        return palabrasT;
-    }
+
     /*******************************************ALGORITMO PARA CALIFICAR DURACION [][][]*/
     public void calificarDuracion(float durAudio){
         if(durAudio<duracion){//valor absoluto

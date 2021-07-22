@@ -10,6 +10,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
@@ -35,6 +36,7 @@ import net.gotev.uploadservice.UploadNotificationConfig;
 import org.w3c.dom.Text;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.UUID;
@@ -47,13 +49,8 @@ public class LTTA extends AppCompatActivity {
     String temas;
     float duracion;
     TextView etResultados;
-    //float califDuracion=100.0f;// aqui se guarda la calificacion de la duracion
     float califTemas=100.0f;// aqui se guarda la calificacion de la temas
-    //float califVelocidad=100.0f;// aqui se guarda la calificacion de la velocidad
     float califTotal=0.0f;
-    //ArrayList<String> copiaPalabrasClave =new ArrayList<String>();//aqui se ponen las palabras clave dichas
-    //ArrayList<ArrayList<String>> Temas =new ArrayList<ArrayList<String>>();//aqui es un array de arrays que contiene cada tema
-    //ArrayList<ArrayList<String>> Temas2 =new ArrayList<ArrayList<String>>();//es la copia de los temas
     int cantidadPalabras=0;//aqui se almacena la cantidad palabras dichas por el alumno
     /*****PARA GRABACION******/
     private static int MICROPHONE_PERMISSON=200;
@@ -76,6 +73,8 @@ public class LTTA extends AppCompatActivity {
     String nombreTest;
     String descripcion="";
     String URLSubirAudio="https://leanonmecc.com/wp-content/plugins/buscar_audio/uploadAudio.php";
+    String id_usuario;
+    SharedPreferences sharedPreferences;
     //ActivityMainBinding binding;
     public static final int STORAGE_PERMISION_CODE=4665;
     @Override
@@ -83,7 +82,7 @@ public class LTTA extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ltta);
         editText=findViewById(R.id.ponNombre);
-        etResultados=findViewById(R.id.resultados);
+        etResultados=(TextView) findViewById(R.id.resultados);
         grabar=findViewById(R.id.record);
         parar=findViewById(R.id.stop);
         parar.setEnabled(false);
@@ -93,6 +92,8 @@ public class LTTA extends AppCompatActivity {
         duracionString=getIntent().getStringExtra("duracion");
         temas=getIntent().getStringExtra("temas");
         duracion=Float.parseFloat(duracionString)*60;//duracion limite total
+        sharedPreferences=getSharedPreferences("Sesion",Context.MODE_PRIVATE);
+        id_usuario=sharedPreferences.getString("id","");
         /*                    permisos                         */
         if(ContextCompat.checkSelfPermission(this,Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -122,10 +123,10 @@ public class LTTA extends AppCompatActivity {
                     String noDicho= calificarTemas();
 
                     califTotal=calificarDuracion(duracionAudio)*.3f+calificarVelocidad(cantidadPalabras)*.3f+califTemas*.4f;
-                    descripcion="Calificación Total: "+String.format("%.2f",califTotal)
-                            +"\nCalificación de duración: "+String.format("%.2f",calificarDuracion(duracionAudio))+" Duracion: "+String.format("%.2f",duracionMinutosAudio)
-                            +"\nCalificación de fluidez: "+String.format("%.2f",calificarVelocidad(cantidadPalabras))
-                            +"\nCalificación de temas: "+String.format("%.2f",califTemas)
+                    descripcion="Porcentaje Total: "+String.format("%.2f",califTotal)
+                            +"\nPorcentaje de tiempo(30%): "+String.format("%.2f",calificarDuracion(duracionAudio))+" Tiempo(min): "+String.format("%.2f",duracionMinutosAudio)
+                            +"\nPorcentaje de fluidez(30%): "+String.format("%.2f",calificarVelocidad(cantidadPalabras))
+                            +"\nPorcentaje de temas(40%): "+String.format("%.2f",califTemas)
                             +"\nTemas faltantes: "+noDicho;
                     etResultados.setText(descripcion+"\n"+transformarTemas(temas));
                 }else{
@@ -148,9 +149,17 @@ public class LTTA extends AppCompatActivity {
             try{
                 String uploadId= UUID.randomUUID().toString();
                 new MultipartUploadRequest(this,uploadId,URLSubirAudio).addFileToUpload(getRecordingPath(nombreAudio),"upload")
+                        .addParameter("id_usuario",id_usuario)
+                        .addParameter("nombre",nombreAudio)
+                        .addParameter("calificacion",String.format("%.2f",califTotal))
+                        .addParameter("descripcion",descripcion.toString())
+                        .addParameter("nombreTest",nombreTest)
                     .setMaxRetries(2)
                     .startUpload();//lo enviamos a la DB
                 Toast.makeText(getApplicationContext() , "Audio Enviado",   Toast.LENGTH_SHORT).show();
+                Intent intent=new Intent(this,Alumno.class);
+                startActivity(intent);
+                finish();
             }catch (Exception e){
                 //e.printStackTrace();
                 Toast.makeText(getApplicationContext() , e.getMessage(),   Toast.LENGTH_SHORT).show();

@@ -17,22 +17,29 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.service.carrier.CarrierMessagingService;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+
+import net.gotev.uploadservice.MultipartUploadRequest;
+import net.gotev.uploadservice.UploadNotificationConfig;
 
 import org.w3c.dom.Text;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
+import java.util.UUID;
 
-public class LTTA extends Activity {
+public class LTTA extends AppCompatActivity {
     /*****PARA EVALUACION*****/
     private static int MAX_PALABRAS=150;
     private static int MIN_PALABRAS=120;
@@ -40,21 +47,24 @@ public class LTTA extends Activity {
     String temas;
     float duracion;
     TextView etResultados;
-    float califDuracion=100.0f;// aqui se guarda la calificacion de la duracion
+    //float califDuracion=100.0f;// aqui se guarda la calificacion de la duracion
     float califTemas=100.0f;// aqui se guarda la calificacion de la temas
-    float califVelocidad=100.0f;// aqui se guarda la calificacion de la velocidad
+    //float califVelocidad=100.0f;// aqui se guarda la calificacion de la velocidad
     float califTotal=0.0f;
-    ArrayList<String> copiaPalabrasClave =new ArrayList<String>();//aqui se ponen las palabras clave dichas
-    ArrayList<ArrayList<String>> Temas =new ArrayList<ArrayList<String>>();//aqui es un array de arrays que contiene cada tema
-    ArrayList<ArrayList<String>> Temas2 =new ArrayList<ArrayList<String>>();//es la copia de los temas
+    //ArrayList<String> copiaPalabrasClave =new ArrayList<String>();//aqui se ponen las palabras clave dichas
+    //ArrayList<ArrayList<String>> Temas =new ArrayList<ArrayList<String>>();//aqui es un array de arrays que contiene cada tema
+    //ArrayList<ArrayList<String>> Temas2 =new ArrayList<ArrayList<String>>();//es la copia de los temas
     int cantidadPalabras=0;//aqui se almacena la cantidad palabras dichas por el alumno
     /*****PARA GRABACION******/
     private static int MICROPHONE_PERMISSON=200;
     EditText editText;
+    Button grabar;
+    Button parar;
     String nombreAudio;
     MediaRecorder mediaRecorder;//para grabar
     MediaPlayer mediaPlayer;//para reproducir
     boolean test=false;
+
     /***PARA RECONOCIMIENTO DE VOZ***/
     private int RecordAudioRequestCode = 1;
     String aviso="";//dice si se acabo o no el proceso  en Toast
@@ -65,12 +75,19 @@ public class LTTA extends Activity {
     /******PARA GUARDAR EN DB*****/
     String nombreTest;
     String descripcion="";
+    String URLSubirAudio="https://leanonmecc.com/wp-content/plugins/buscar_audio/uploadAudio.php";
+    //ActivityMainBinding binding;
+    public static final int STORAGE_PERMISION_CODE=4665;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ltta);
         editText=findViewById(R.id.ponNombre);
         etResultados=findViewById(R.id.resultados);
+        grabar=findViewById(R.id.record);
+        parar=findViewById(R.id.stop);
+        parar.setEnabled(false);
+        //binding=ActivityMainBinding.inflate(getLayoutInflater());
         /*                     OBTENCION DE DATOS PARA INSERTAR Y EVALUAR               */
         nombreTest=getIntent().getStringExtra("nombreTest");
         duracionString=getIntent().getStringExtra("duracion");
@@ -82,13 +99,14 @@ public class LTTA extends Activity {
                 ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.RECORD_AUDIO},RecordAudioRequestCode);
             }
         }
+
         if(isMicrophonePresent()) {
             getMicrophnePermission();
         }
+        requestStoragePermission();
         /*                  Para reconocimiento de voz                         */
         speech=SpeechRecognizer.createSpeechRecognizer(this);//inicializa el speech
-        startListening();
-        iniciaSpeech();
+
     }
     /****************************Boton PARA CUANDO SE CONFIRMA*/
     public void confirmarAudio(View view){
@@ -102,17 +120,20 @@ public class LTTA extends Activity {
                     duracionMinutosAudio=duracionAudio/60;
                     calificarDuracion(duracionAudio);
                     String noDicho= calificarTemas();
-                    calificarVelocidad(cantidadPalabras);
-                    califTotal=califDuracion*.3f+califVelocidad*.3f+califTemas*.4f;
+
+                    califTotal=calificarDuracion(duracionAudio)*.3f+calificarVelocidad(cantidadPalabras)*.3f+califTemas*.4f;
                     descripcion="Calificación Total: "+String.format("%.2f",califTotal)
-                            +"\nCalificación de duración: "+String.format("%.2f",califDuracion)+" Duracion: "+String.format("%.2f",duracionMinutosAudio)
-                            +"\nCalificación de fluidez: "+String.format("%.2f",califVelocidad)
+                            +"\nCalificación de duración: "+String.format("%.2f",calificarDuracion(duracionAudio))+" Duracion: "+String.format("%.2f",duracionMinutosAudio)
+                            +"\nCalificación de fluidez: "+String.format("%.2f",calificarVelocidad(cantidadPalabras))
                             +"\nCalificación de temas: "+String.format("%.2f",califTemas)
-                            +"\nTemas faltantes: "+noDicho+"\n"+transformarTemas(temas);
-                    etResultados.setText(descripcion);
+                            +"\nTemas faltantes: "+noDicho;
+                    etResultados.setText(descripcion+"\n"+transformarTemas(temas));
+                }else{
+                    Toast.makeText(getApplicationContext() , "Error de audio duracion invalida",   Toast.LENGTH_SHORT).show();
                 }
             }catch (Exception e){
                 e.printStackTrace();
+                Toast.makeText(getApplicationContext() , "Error "+e.getMessage(),   Toast.LENGTH_SHORT).show();
             }
 
 
@@ -120,9 +141,22 @@ public class LTTA extends Activity {
             Toast.makeText(getApplicationContext() , "No has grabado nada revisa tu audio",   Toast.LENGTH_SHORT).show();
         }
     }
+    /**********************Boton que envia el audio a la base de datos*/
     public void enviar(View view){
-        if(!etResultados.getText().toString().equals("")){
+        if(!etResultados.getText().toString().equals("") && !text.equals("")){
             //hacer envio php
+            try{
+                String uploadId= UUID.randomUUID().toString();
+                new MultipartUploadRequest(this,uploadId,URLSubirAudio).addFileToUpload(getRecordingPath(nombreAudio),"upload")
+                    .setMaxRetries(2)
+                    .startUpload();//lo enviamos a la DB
+                Toast.makeText(getApplicationContext() , "Audio Enviado",   Toast.LENGTH_SHORT).show();
+            }catch (Exception e){
+                //e.printStackTrace();
+                Toast.makeText(getApplicationContext() , e.getMessage(),   Toast.LENGTH_SHORT).show();
+                System.out.println("Error"+e.getMessage());
+            }
+            
         }else{
             Toast.makeText(getApplicationContext() , "No has sido evaluado",   Toast.LENGTH_SHORT).show();
         }
@@ -132,6 +166,8 @@ public class LTTA extends Activity {
         nombreAudio=editText.getText().toString();
         if(!nombreAudio.equals("")){
             try{
+                //mediaPlayer=null;
+
                 mediaRecorder=new MediaRecorder();
                 mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
                 mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
@@ -140,8 +176,12 @@ public class LTTA extends Activity {
                 mediaRecorder.prepare();
                 mediaRecorder.start();
                 text="";//reinicia el texto
+                mediaPlayer=null;
+                startListening();
+                iniciaSpeech();
                 editText.setEnabled(false);//deja de poder ser editado
-                test=true;//para que solo durante este momento guarde el texto
+                parar.setEnabled(true);
+                grabar.setEnabled(false);
                 Toast.makeText(getApplicationContext() , "Se ha comenzado a grabar"+aviso,   Toast.LENGTH_SHORT).show();
             }catch (Exception e){
                 Toast.makeText(getApplicationContext() , "Ha ocurrido un error"+e.getMessage(),   Toast.LENGTH_SHORT).show();
@@ -155,9 +195,12 @@ public class LTTA extends Activity {
         mediaRecorder.stop();
         mediaRecorder.release();
         mediaRecorder=null;
-        test=false;
+        speech.stopListening();
+        speech.destroy();
         mediaPlayer=MediaPlayer.create(LTTA.this, Uri.parse(getRecordingPath(nombreAudio)));//le pone el file al mediaplayer
         Toast.makeText(getApplicationContext() , "Se ha terminado de grabar",   Toast.LENGTH_SHORT).show();
+        parar.setEnabled(false);
+        grabar.setEnabled(true);
     }
     /*****************************************Para reproducir audio***/
     public void play(View view){
@@ -172,9 +215,13 @@ public class LTTA extends Activity {
             }
         }
     }
+
     /******************************************************FUNCIONES SECUNDARIAS********************************************************************
      * *********************************************************************************************************************************************/
     public String calificarTemas(){
+        ArrayList<String> copiaPalabrasClave =new ArrayList<String>();//aqui se ponen las palabras clave dichas
+        ArrayList<ArrayList<String>> Temas =new ArrayList<ArrayList<String>>();//aqui es un array de arrays que contiene cada tema
+        ArrayList<ArrayList<String>> Temas2 =new ArrayList<ArrayList<String>>();//es la copia de los temas
         ////primero llenamos el array de temas de temas
         int numTemas=0;
         StringTokenizer stringTokenizer=new StringTokenizer(temas," \n");
@@ -190,10 +237,6 @@ public class LTTA extends Activity {
             }
 
         }
-        /*for(int i=0;i<numTemas;i++){
-            ArrayList<String > auxiliar=new ArrayList<>();
-
-        }*/
 
         copiarArraydeArrays(Temas,Temas2);//copia el array Temas a Temas2
         /*Sacamos cuantas palabras dijo*/
@@ -278,21 +321,25 @@ public class LTTA extends Activity {
         }
     }
     /*****************************************ALGORITMO PARA CALIFICAR VELOCIDAD[][][][]*/
-    public void calificarVelocidad(int palabrasT){
+    public float calificarVelocidad(int palabrasT){
+        float califVelocidad=100.0f;// aqui se guarda la calificacion de la velocidad
         if((float)palabrasT<(float)((duracion/60)*MIN_PALABRAS)){//menor a 600 palabras
             califVelocidad-=(((((float)duracion/60)*(float)MIN_PALABRAS)-(float)palabrasT)/(((float)duracion/60)*(float)MIN_PALABRAS))*100;
         }else if((float)palabrasT>(float)((duracion/60)*MAX_PALABRAS)){//mayor a 750 palabras
             califVelocidad+=(((((float)duracion/60)*(float)MAX_PALABRAS)-(float)palabrasT)/(((float)duracion/60)*(float)MAX_PALABRAS))*100;
         }
+        return califVelocidad;
     }
 
     /*******************************************ALGORITMO PARA CALIFICAR DURACION [][][]*/
-    public void calificarDuracion(float durAudio){
+    public float calificarDuracion(float durAudio){
+        float califDuracion=100.0f;// aqui se guarda la calificacion de la duracion
         if(durAudio<duracion){//valor absoluto
             califDuracion+=((durAudio-duracion)/duracion)*100;//formula
         }else if(duracion>duracion){
             califDuracion-=((durAudio-duracion)/duracion)*100;
         }
+        return califDuracion;
     }
 
     /*****************************************funcion para cargar e iniciar el speech*/
@@ -336,11 +383,11 @@ public class LTTA extends Activity {
                         ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);//contiene todas las cadenas dichas
 
                         for (String result:matches){
-                            if(test){
+
                                 text+=result+" ";//result contiene cadenas de caracteres con espacios
                                 aviso=" Ha iniciado el test";
                                 Toast.makeText(getApplicationContext() , "Analizado correctamente",   Toast.LENGTH_SHORT).show();
-                            }
+
 
                             //etResultados.setText(text);
                         }
@@ -389,7 +436,7 @@ public class LTTA extends Activity {
     private String getRecordingPath(String nombre){
         ContextWrapper contextWrapper=new ContextWrapper(getApplicationContext());
         File music_dir=contextWrapper.getExternalFilesDir(Environment.DIRECTORY_MUSIC);
-        File file= new File(music_dir,nombre+".mp3");
+        File file= new File(music_dir,nombre+".mp3");//lo gugarda en el path de android music
         return file.getPath();
     }
     /***********************************************Funcion que obtiene el error de reconocimiento*/
@@ -436,5 +483,20 @@ public class LTTA extends Activity {
             if(grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 Toast.makeText(this,"Permission Granted",Toast.LENGTH_LONG).show();
         }
+        if (requestCode == STORAGE_PERMISION_CODE && grantResults.length > 0 ){
+            if(grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                Toast.makeText(this,"Permission Granted",Toast.LENGTH_LONG).show();
+        }
     }
+    public void requestStoragePermission(){
+        if(ContextCompat.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE)==PackageManager.PERMISSION_DENIED){
+            ActivityCompat.requestPermissions(this,new String[] {Manifest.permission.READ_EXTERNAL_STORAGE},STORAGE_PERMISION_CODE);
+        }
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //binding=null;
+    }
+
 }

@@ -30,6 +30,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.chaquo.python.PyObject;
+import com.chaquo.python.Python;
+import com.chaquo.python.android.AndroidPlatform;
+
 import net.gotev.uploadservice.MultipartUploadRequest;
 import net.gotev.uploadservice.UploadNotificationConfig;
 
@@ -121,12 +125,21 @@ public class LTTA extends AppCompatActivity {
                     duracionMinutosAudio=duracionAudio/60;
                     calificarDuracion(duracionAudio);
                     String noDicho= calificarTemas();
+                    /****Obtenemos evaluacion de python****/
+                    if(!Python.isStarted()){
+                        Python.start(new AndroidPlatform(this));
+                    }
+                    Python py= Python.getInstance();
+                    PyObject pyobj=py.getModule("hola");//el nombre el script de python
+                    PyObject obj=pyobj.callAttr("main",calificarDuracion(duracionAudio));
 
-                    califTotal=calificarDuracion(duracionAudio)*.3f+calificarVelocidad(cantidadPalabras)*.3f+califTemas*.4f;
+                    /***********/
+                    califTotal=calificarDuracion(duracionAudio)*.10f+calificarVelocidad(cantidadPalabras)*.10f+califTemas*.35f;
                     descripcion="Porcentaje Total: "+String.format("%.2f",califTotal)
                             +"\nPorcentaje de tiempo(30%): "+String.format("%.2f",calificarDuracion(duracionAudio))+" Tiempo(min): "+String.format("%.2f",duracionMinutosAudio)
                             +"\nPorcentaje de fluidez(30%): "+String.format("%.2f",calificarVelocidad(cantidadPalabras))
                             +"\nPorcentaje de temas(40%): "+String.format("%.2f",califTemas)
+                            +"\nPython: "+obj.toString()
                             +"\nTemas faltantes: "+noDicho;
                     etResultados.setText(descripcion+"\n"+transformarTemas(temas));
                 }else{

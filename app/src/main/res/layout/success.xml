@@ -43,7 +43,6 @@
         android:layout_marginTop="28dp"
         android:background="@color/com_facebook_button_background_color"
         android:onClick="logout"
-        android:outlineAmbientShadowColor="@color/com_facebook_button_border_color_focused"
         android:text="Logout"
         android:textColor="@color/com_facebook_button_text_color"
         app:layout_constraintEnd_toEndOf="parent"

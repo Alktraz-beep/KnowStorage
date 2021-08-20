@@ -32,6 +32,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -74,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
         etPassword=findViewById(R.id.etPassword);
         textView2=findViewById(R.id.textView2);
         login=findViewById(R.id.login_button);
+        //login.setReadPermissions("user_status");
         //login.setReadPermissions(Arrays.asList("public_profile", "email", "user_birthday", "user_friends"));//se añade permisos
         info=findViewById(R.id.info);
         callbackManager=CallbackManager.Factory.create();
@@ -86,6 +88,22 @@ public class MainActivity extends AppCompatActivity {
         progressDialog=new ProgressDialog(this);
         progressDialog.setMessage("Procesando solicitud...");
         progressDialog.setCanceledOnTouchOutside(false);
+        //Print hash
+        /*try {
+            PackageInfo info = getPackageManager().getPackageInfo(
+                    "com.example.knowstorage",
+                    PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+
+        } catch (NoSuchAlgorithmException e) {
+
+        }*/
+        ///
         /**/
         /**********************************para continuar con FB********************************************************************************************/
         login.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {

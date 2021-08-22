@@ -7,9 +7,10 @@ android {
     defaultConfig {
         applicationId "com.example.knowstorage"
         minSdkVersion 21
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
+
         sourceSets{
             main{
                 python{
@@ -23,15 +24,19 @@ android {
         }
 
         python{
-            buildPython"C:/Users/Josue Yafte/AppData/Local/Microsoft/WindowsApps/python.exe"
+            buildPython"C:/Users/Josue Yafte/AppData/Local/Programs/Python/Python36/python.exe"
             pip {
+
+                install "setuptools"
+                install "wheel"
+                install "pep517"
                 install "speechrecognition"
                 install "nltk"
-                install "spacy"
                 install "collections-extended"
+                install "https://github.com/explosion/spacy-models/releases/download/es_core_news_sm-2.2.0/es_core_news_sm-2.2.0.tar.gz "
             }
         }
-
+        multiDexEnabled true
     }
 
     buildTypes {
@@ -57,5 +62,5 @@ dependencies {
     implementation 'com.facebook.android:facebook-android-sdk:[8,9)'
     implementation 'com.karumi:dexter:6.2.2'
     implementation "net.gotev:uploadservice:2.1"
-    compile 'com.squareup.retrofit2:converter-gson:2.0.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.0.0'
 }

@@ -111,6 +111,10 @@ public class LTTA extends AppCompatActivity {
         requestStoragePermission();
         /*                  Para reconocimiento de voz                         */
         speech=SpeechRecognizer.createSpeechRecognizer(this);//inicializa el speech
+        /***************INICIA PYTHON**********************/
+        if(!Python.isStarted()){
+            Python.start(new AndroidPlatform(this));
+        }
 
     }
     /****************************Boton PARA CUANDO SE CONFIRMA*/
@@ -126,12 +130,10 @@ public class LTTA extends AppCompatActivity {
                     calificarDuracion(duracionAudio);
                     String noDicho= calificarTemas();
                     /****Obtenemos evaluacion de python****/
-                    if(!Python.isStarted()){
-                        Python.start(new AndroidPlatform(this));
-                    }
+
                     Python py= Python.getInstance();
                     PyObject pyobj=py.getModule("hola");//el nombre el script de python
-                    PyObject obj=pyobj.callAttr("main",calificarDuracion(duracionAudio));
+                    PyObject obj=pyobj.callAttr("main");
 
                     /***********/
                     califTotal=calificarDuracion(duracionAudio)*.10f+calificarVelocidad(cantidadPalabras)*.10f+califTemas*.35f;

@@ -51,6 +51,11 @@ public class Alumno extends AppCompatActivity {
         Intent intent = new Intent(this, Audios.class);
         startActivity(intent);
     }
+    /*************************************************************BOTON que muestra la storage(grabar sin evaluar y escucharlos)*/
+    public void verMiStorage(View v){
+        Intent intent = new Intent(this, Storage.class);
+        startActivity(intent);
+    }
     /*******************************Funciones Secundarias*******************************************************************************************/
     public void limpiarPreferences(){
         sharedPreferences.edit().clear().apply();

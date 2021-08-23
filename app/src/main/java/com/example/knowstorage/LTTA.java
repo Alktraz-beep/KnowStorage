@@ -12,6 +12,7 @@ import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.media.AudioFormat;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
@@ -132,12 +133,12 @@ public class LTTA extends AppCompatActivity {
                     /****Obtenemos evaluacion de python****/
 
                     Python py= Python.getInstance();
-                    PyObject pyobj=py.getModule("version2");//el nombre el script de python
-                    PyObject obj=pyobj.callAttr("main2",calificarDuracion(duracionAudio),calificarVelocidad(cantidadPalabras),califTemas);
+                    PyObject pyobj=py.getModule("MuletillasTexto");//el nombre el script de python
+                    PyObject obj=pyobj.callAttr("main",calificarDuracion(duracionAudio),calificarVelocidad(cantidadPalabras),califTemas,text);
 
                     /***********/
                     califTotal=calificarDuracion(duracionAudio)*.10f+calificarVelocidad(cantidadPalabras)*.10f+califTemas*.35f;
-                    descripcion= "\nTemas faltantes: "+noDicho;
+                    descripcion= obj.toString()+"\nTemas faltantes: "+noDicho;
                     etResultados.setText(descripcion+"\n"+transformarTemas(temas));
                 }else{
                     Toast.makeText(getApplicationContext() , "Error de audio duracion invalida",   Toast.LENGTH_SHORT).show();
@@ -189,9 +190,9 @@ public class LTTA extends AppCompatActivity {
 
                 mediaRecorder=new MediaRecorder();
                 mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-                mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+                mediaRecorder.setOutputFormat(AudioFormat.ENCODING_PCM_16BIT);
                 mediaRecorder.setOutputFile(getRecordingPath(nombreAudio));
-                mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+                mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
                 mediaRecorder.prepare();
                 mediaRecorder.start();
                 text="";//reinicia el texto
@@ -455,7 +456,7 @@ public class LTTA extends AppCompatActivity {
     private String getRecordingPath(String nombre){
         ContextWrapper contextWrapper=new ContextWrapper(getApplicationContext());
         File music_dir=contextWrapper.getExternalFilesDir(Environment.DIRECTORY_MUSIC);
-        File file= new File(music_dir,nombre+".mp3");//lo gugarda en el path de android music
+        File file= new File(music_dir,nombre+".wav");//lo gugarda en el path de android music
         return file.getPath();
     }
     /***********************************************Funcion que obtiene el error de reconocimiento*/

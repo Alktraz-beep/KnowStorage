@@ -9,10 +9,9 @@
 
     <TextView
         android:id="@+id/datos"
-        android:layout_width="104dp"
-        android:layout_height="32dp"
+        android:layout_width="178dp"
+        android:layout_height="105dp"
         android:layout_marginStart="32dp"
-        android:layout_marginLeft="32dp"
         android:layout_marginTop="28dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -48,12 +47,27 @@
         android:id="@+id/verMisAudios"
         android:layout_width="268dp"
         android:layout_height="81dp"
-        android:layout_marginTop="428dp"
+        android:layout_marginTop="484dp"
         android:background="#279989"
+        android:onClick="verMisAudios"
         android:text="Ver mis audioTest"
         android:textColor="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:onClick="verMisAudios"/>
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:onClick="verMiStorage"
+        android:id="@+id/button7"
+        android:layout_width="268dp"
+        android:layout_height="81dp"
+        android:layout_marginTop="372dp"
+        android:text="Storage"
+        android:background="#279989"
+        android:textColor="@android:color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

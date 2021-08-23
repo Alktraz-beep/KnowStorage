@@ -9,17 +9,20 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/iconoleanlearning"
         android:label="@string/app_name"
         android:networkSecurityConfig="@xml/network_security_config"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/iconoleanlearning"
         android:supportsRtl="true"
-        android:requestLegacyExternalStorage="true"
-        android:usesCleartextTraffic="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true">
+        <activity android:name=".Reproductor"></activity>
+        <activity android:name=".ContenedorAudiosSinEvaluar" />
+        <activity android:name=".GrabadoraKnowStorage" />
+        <activity android:name=".Storage" />
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"

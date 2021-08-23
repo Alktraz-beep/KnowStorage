@@ -85,7 +85,7 @@ public class Audios extends AppCompatActivity implements AdapterView.OnItemClick
         intent.putExtra("calificacion",listAdapterAudios.getItem(position).getCalificacion());
         intent.putExtra("descripcion",listAdapterAudios.getItem(position).getDescripcion());
         startActivity(intent);
-        finish();
+        //finish();
     }
     /***********************************************FUNCIONES SECUNDARIAS*******************************************/
 

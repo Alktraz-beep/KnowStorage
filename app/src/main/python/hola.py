@@ -10,12 +10,14 @@ import spacy
 from spacy import displacy
 import time
 
+#v1
 #Aqui comienza reconocimiento de voz
 from os.path import dirname, join
-def main():
-    filename = join(dirname(__file__), "um.wav")
+def main(califDuracion,califVelocidad,califTemas):
+    filename = join(dirname(__file__), "Prep.wav")
     r = sr.Recognizer()
-    texto=""	
+#    texto=""	
+    aviso=""
     with sr.AudioFile(filename) as source: #Conj, Det, Prep
         print("Espera..")
         audio = r.listen(source)
@@ -23,12 +25,14 @@ def main():
             texto = r.recognize_google(audio,language='es-MX')
             time.sleep(.5)
             print("Tu dijiste: {}\n".format(texto) )
+            aviso= "Si reconoce"
         except:
             print("Yo no pude escucharte")
+            aviso= "No reconoce"
 #Aqui finaliza codigo 
 #Aqui comienza el codigo de muletillas
     nlp = spacy.load('es_core_news_sm')
-    doc = nlp(texto )
+    doc = nlp(texto)
     conteo_DET= [token.orth_ for token in doc if token.pos_ == 'DET'] ###CCONJ, VERB, ADP, NOUN
     conteo_ADP= [token.orth_ for token in doc if token.pos_ == 'ADP']
     conteo_CCONJ= [token.orth_ for token in doc if token.pos_ == 'CCONJ']
@@ -64,27 +68,18 @@ def main():
     elif sum >27:
         califMule=0.00
 
-    print("porc=", califMule)
+    #print("porc=", califMule)
 #Aqui Finaliza codigo Muletillas
 
 # Aqui comienza calculo del promedio total
-    a=2
-    b=3
-    c=1
-    d=4
-#def promT(c,califMule):
-    # porcV=califVelocidad*10
-    # porcD=califDuracion *10
-    # porcTe=califTemas * 35
+
+    porcV=califVelocidad*.10
+    porcD=califDuracion *.10
+    porcTe=califTemas * .35
     # porcCon=califCon *
     # porcTon=califTon *
     porcM = califMule *.15 # sacando procentaje de Muletillas con respecto a porcentaje Muletillas comparado con un 15%
-    num2 = b + c
-    num3= d + c
-    # porcTotal=porcV+porcD+porcTe+porcCon+porCon+porcTon+porcM
-    return "Porcentaje" +str(porcM)+"\n"+"Promedio 2 igual a " +str(num2)+"\n"+"Promedio 3 igual a "+str(num3)
+    porcTotal=porcV+porcD+porcTe+porcM
+    return "Promedio velocidad: "+str(califVelocidad)+"\n"+"Promedio duración: " +str(califDuracion)+"\n"+"Promedio temas: "+str(califTemas)+"\n"+"Promedio muletillas: "+str(califMule)+"\n"+"Promedio total: "+str(porcTotal)+aviso
 
-#res = promT(c,califMule)
-#Aqui finaliza calculo del promedio Final 
-#print(res)
 

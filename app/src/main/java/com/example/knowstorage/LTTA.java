@@ -132,17 +132,12 @@ public class LTTA extends AppCompatActivity {
                     /****Obtenemos evaluacion de python****/
 
                     Python py= Python.getInstance();
-                    PyObject pyobj=py.getModule("hola");//el nombre el script de python
-                    PyObject obj=pyobj.callAttr("main");
+                    PyObject pyobj=py.getModule("version2");//el nombre el script de python
+                    PyObject obj=pyobj.callAttr("main2",calificarDuracion(duracionAudio),calificarVelocidad(cantidadPalabras),califTemas);
 
                     /***********/
                     califTotal=calificarDuracion(duracionAudio)*.10f+calificarVelocidad(cantidadPalabras)*.10f+califTemas*.35f;
-                    descripcion="Porcentaje Total: "+String.format("%.2f",califTotal)
-                            +"\nPorcentaje de tiempo(30%): "+String.format("%.2f",calificarDuracion(duracionAudio))+" Tiempo(min): "+String.format("%.2f",duracionMinutosAudio)
-                            +"\nPorcentaje de fluidez(30%): "+String.format("%.2f",calificarVelocidad(cantidadPalabras))
-                            +"\nPorcentaje de temas(40%): "+String.format("%.2f",califTemas)
-                            +"\nPython: "+obj.toString()
-                            +"\nTemas faltantes: "+noDicho;
+                    descripcion= "\nTemas faltantes: "+noDicho;
                     etResultados.setText(descripcion+"\n"+transformarTemas(temas));
                 }else{
                     Toast.makeText(getApplicationContext() , "Error de audio duracion invalida",   Toast.LENGTH_SHORT).show();
